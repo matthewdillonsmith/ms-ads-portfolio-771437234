@@ -12,6 +12,6 @@
 <br>
 <p>If you have any questions/comments about the work contained in this repository, please contact me via the means outlined below:</p>
 <ul>
-  <li><u>Email</u>: msmit146@syr.edu</li>
-  <li><u>Phone</u>: (360) 359-2702</li>
+  <li>Email: msmit146@syr.edu</li>
+  <li>Phone: (360) 359-2702</li>
 </ul>
