@@ -1,4 +1,4 @@
-<h1>Welcome to my Applied Data Science Portfolio.</h1>
+<h1>Welcome to my Applied Data Science (ADS) Program Portfolio.</h1>
 <br>
 <h2>Walkthrough</h2>
 <br>
