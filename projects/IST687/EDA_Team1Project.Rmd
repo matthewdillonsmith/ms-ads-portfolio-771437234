@@ -1,0 +1,174 @@
+# IST 687 - Team 1 - Project EDA (Exploratory Data Analysis)
+
+- First, need to do a corrplot to get to the bottom of which features are most related to the Y-variables of each dataset:
+
+```{r}
+install.packages("corrplot")
+library(corrplot)
+
+# will need to do multiple corrplots as there are 30+ features in each dataset; 
+```
+
+
+## Corrplots: WDBC Dataset
+```{r}
+install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+library(tidyverse)
+
+fixed_col_names_wdbc = c(
+  "id",
+  "diagnosis",
+  "radius_mean",
+  "texture_mean",
+  "perimeter_mean",
+  "area_mean",
+  "smoothness_mean",
+  "compactness_mean",
+  "concavity_mean",
+  "concave_points_mean",
+  "symmetry_mean",
+  "fractal_dimension_mean",
+  "radius_SE",
+  "texture_SE",
+  "perimeter_SE",
+  "area_SE",
+  "smoothness_SE",
+  "compactness_SE",
+  "concavity_SE",
+  "concave_points_SE",
+  "symmetry_SE",
+  "fractal_dimension_SE",
+  "radius_worst",
+  "texture_worst",
+  "perimeter_worst",
+  "area_worst",
+  "smoothness_worst",
+  "compactness_worst",
+  "concavity_worst",
+  "concave_points_worst",
+  "symmetry_worst",
+  "fractal_dimension_worst"
+)
+
+df_wdbc = read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data", col_names = fixed_col_names_wdbc)
+
+length(fixed_col_names_wdbc)
+  # [1] 32
+
+length(fixed_col_names_wdbc)/6
+  # [1] 5.333333
+  # Will need 5-6 corrplots to show this is a readable way...
+
+# Changing .$diagnosis variable values from "M/B" to "1/0", respectively
+df_wdbc <- 
+  df_wdbc %>%
+  mutate(diagnosis = replace(diagnosis, diagnosis == "M", 1)) %>%
+  mutate(diagnosis = replace(diagnosis, diagnosis == "B", 0))
+
+# Change .$diagnosis to numeric values
+df_wdbc$diagnosis <- as.numeric(df_wdbc$diagnosis)
+
+
+# Need to create seperate dataframes for each corrplot(?):
+
+df_wdbc_corrplotdata_1 <- data.frame(c(df_wdbc[2], df_wdbc[3:11]))
+
+# make sure to cite this website in your presentation: https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html
+
+corrplot(cor(df_wdbc_corrplotdata_1), method = 'number', number.cex=0.65)
+
+
+
+# Now for the rest of the factors:
+df_wdbc_corrplotdata_2 <- data.frame(c(df_wdbc[2], df_wdbc[12:20]))
+df_wdbc_corrplotdata_3 <- data.frame(c(df_wdbc[2], df_wdbc[21:29]))
+df_wdbc_corrplotdata_4 <- data.frame(c(df_wdbc[2], df_wdbc[29:32]))
+
+
+# reference to change the font size of the numbers: https://stackoverflow.com/questions/26574054/how-to-change-font-size-of-the-correlation-coefficient-in-corrplot
+corrplot(cor(df_wdbc_corrplotdata_2), method = 'number', number.cex=0.65)
+corrplot(cor(df_wdbc_corrplotdata_3), method = 'number', number.cex=0.65)
+corrplot(cor(df_wdbc_corrplotdata_4), method = 'number', number.cex=0.65)
+
+
+
+
+
+
+
+```
+
+### Lets try this in ggplot:
+
+```{r}
+# Reference: http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
+install.packages("ggcorrplot")
+library(ggcorrplot)
+library(ggplot2)
+
+
+```
+
+```{r}
+corr1<- round(cor(df_wdbc_corrplotdata_1), 2)
+p.mat1 <- cor_pmat(df_wdbc_corrplotdata_1)
+
+corr2<- round(cor(df_wdbc_corrplotdata_2), 2)
+p.mat2 <- cor_pmat(df_wdbc_corrplotdata_2)
+
+corr3<- round(cor(df_wdbc_corrplotdata_3), 2)
+p.mat3 <- cor_pmat(df_wdbc_corrplotdata_3)
+
+
+corr4<- round(cor(df_wdbc_corrplotdata_4), 2)
+p.mat4 <- cor_pmat(df_wdbc_corrplotdata_4)
+
+```
+
+```{r}
+
+ggcorrplot(
+  corr1,
+  ggtheme = ggplot2::theme_grey,
+  method = 'square',
+  hc.order = T,
+  outline.color = "black",
+  type = "lower",
+  lab = T,
+  p.mat = p.mat1) + 
+  ggtitle("Correlation plot 1 of 4")
+
+ggcorrplot(
+  corr2,
+  ggtheme = ggplot2::theme_grey,
+  method = 'square',
+  hc.order = T,
+  outline.color = "black",
+  type = "lower",
+  lab = T,
+  p.mat = p.mat2) + 
+  ggtitle("Correlation plot 2 of 4")
+
+ggcorrplot(
+  corr3,
+  ggtheme = ggplot2::theme_grey,
+  method = 'square',
+  hc.order = T,
+  outline.color = "black",
+  type = "lower",
+  lab = T,
+  p.mat = p.mat3) + 
+  ggtitle("Correlation plot 3 of 4")
+
+ggcorrplot(
+  corr4,
+  ggtheme = ggplot2::theme_grey,
+  method = 'square',
+  hc.order = T,
+  outline.color = "black",
+  type = "lower",
+  lab = T,
+  p.mat = p.mat4) + 
+  ggtitle("Correlation plot 4 of 4")
+```
+

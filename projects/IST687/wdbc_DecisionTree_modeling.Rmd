@@ -1,0 +1,99 @@
+---
+title: "Team 1 - Modeling the Data"
+output: html_notebook
+---
+# Pulling in the Data
+```{r}
+# R code for cleaned data set:
+library(tidyverse)
+
+fixed_col_names_wdbc = c(
+  "id",
+  "diagnosis",
+  "radius_mean",
+  "texture_mean",
+  "perimeter_mean",
+  "area_mean",
+  "smoothness_mean",
+  "compactness_mean",
+  "concavity_mean",
+  "concave_points_mean",
+  "symmetry_mean",
+  "fractal_dimension_mean",
+  "radius_SE",
+  "texture_SE",
+  "perimeter_SE",
+  "area_SE",
+  "smoothness_SE",
+  "compactness_SE",
+  "concavity_SE",
+  "concave_points_SE",
+  "symmetry_SE",
+  "fractal_dimension_SE",
+  "radius_worst",
+  "texture_worst",
+  "perimeter_worst",
+  "area_worst",
+  "smoothness_worst",
+  "compactness_worst",
+  "concavity_worst",
+  "concave_points_worst",
+  "symmetry_worst",
+  "fractal_dimension_worst"
+)
+
+df_wdbc = read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data", col_names = fixed_col_names_wdbc)
+
+write_csv(df_wdbc, "~/SU/IST687/IST687_HW/Team1-Project.wdbc_CLEANED.csv")
+
+
+```
+
+# Creating the Decision Tree 
+
+```{r}
+# Remove 'id' and 'malignant_coded' (from previous transformations)
+library(rpart)
+df_wdbc_tree <- df_wdbc[, c(-1)]
+df_wdbc_tree
+
+# Create decision tree
+wdbc_tree <- rpart(diagnosis ~ ., data = df_wdbc_tree)
+wdbc_tree
+
+# Visualize decision tree
+library(rpart.plot)
+prp(wdbc_tree, faclen = 0, cex = 1, extra = 100)
+
+```
+
+
+```{r}
+
+# Create `predictedMalignant` vector
+predictedMalignant <- predict(wdbc_tree, newdata=df_wdbc_tree, type='class')
+
+# creates dataframe placing actual diagnoses and the predicted diagnoses next to each other for visual comparison
+data.frame(predictedMalignant, df_wdbc$diagnosis)
+```
+
+```{r}
+# Create the confusion matrix
+
+actualMalignant <- as.factor(df_wdbc_tree$diagnosis == "M")
+confMatrix <- table(predictedMalignant, actualMalignant)
+confMatrix
+```
+
+```{r}
+# Calculate accuracy
+
+accuracy <- 1 - (sum(confMatrix) - sum(diag(confMatrix))) / sum(confMatrix)
+accuracy
+# Output: [1] 0.9595782
+
+# Our current model for diagnoses is 95.958% accurate!!!!!!!!
+
+```
+
+
